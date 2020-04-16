@@ -1,12 +1,12 @@
-package router
+package routers
 
 import (
-	"gin_log/controller"
+	"gin_log/controllers"
 	"github.com/gin-gonic/gin"
 )
 
 func APIRouter() *gin.Engine {
 	r := gin.Default()
-	r.POST("/http", controller.ReceiveLog)
+	r.POST("/http", controllers.ReceiveLog)
 	return r
 }
