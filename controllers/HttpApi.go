@@ -26,7 +26,6 @@ func ReceiveLog(c *gin.Context) {
 		return
 	}
 	services.DealLogs(jsonInputs)
-	Log.Info("qeqweqe")
 
 	c.JSON(200, gin.H{
 		"message": "成功!",
