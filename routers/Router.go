@@ -9,9 +9,6 @@ import (
 
 func APIRouter() *gin.Engine {
 	r := gin.New()
-
-	// 设置输出
-
 	r.Use(middleware.Logger(common.Log))
 	r.POST("/http", controllers.ReceiveLog)
 	return r
