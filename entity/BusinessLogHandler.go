@@ -1,5 +1,10 @@
 package entity
 
+import (
+	"gin_log/common"
+	"strings"
+)
+
 // 业务日志处理接口
 type BusinessLogInterface interface {
 	Counter() bool
@@ -7,23 +12,23 @@ type BusinessLogInterface interface {
 }
 
 type BusinessLogHandler struct {
-	Inputs *LogContent
+	Inputs              *LogContent
 }
 
-func (blh BusinessLogHandler) Counter() bool {
+func (blh *BusinessLogHandler) Counter(countLogConfig []string) bool {
 	// 获取配置中需要统计的日志级别
-
-	//countLevel := common.Config.GetString("business_log_count.")
-	//
-	////如果没有配置则统计所有级别的错误
-	//if len(CountErrorLevel) > 0 {
-	//	//只统计配置了的错误级别的错误
-	//	if !common.IsStringExistsInSlice(JsonInput.Level, CountErrorLevel) {
-	//		return true
-	//	}
-	//}
+	errorLevel := common.GetConfigWithProjectEnv(blh.Inputs.ProjectEnv, "business_log_count.count_level");
+	CountErrorLevel = strings.Split(errorLevel, ",")
+	// 如果没有配置则统计所有级别的错误
+	if len(CountErrorLevel) > 0 {
+		// 只统计配置了的错误级别的错误
+		if !common.IsStringExistsInSlice(JsonInput.Level, CountErrorLevel) {
+			return true
+		}
+	}
 	return true
 }
+
 func (blh BusinessLogHandler) SendNotice() bool {
 	// 获取配置中需要统计的日志级别
 
