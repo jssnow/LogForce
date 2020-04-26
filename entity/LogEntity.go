@@ -1,6 +1,8 @@
 package entity
 
-import "strings"
+import (
+	"strings"
+)
 
 type LogContent struct {
 	// nginx 日志

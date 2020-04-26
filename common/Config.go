@@ -19,6 +19,6 @@ func InitConfig() {
 	}
 }
 
-func GetConfigWithProjectEnv(projectEnv string, configKey string) string {
-	return Config.GetString(projectEnv + "." + configKey)
+func GetConfigWithProjectEnv(projectEnv string, configKey string) map[string]interface{} {
+	return Config.GetStringMap (projectEnv + "." + configKey)
 }

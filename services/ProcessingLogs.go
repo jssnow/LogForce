@@ -1,7 +1,6 @@
 package services
 
 import (
-	"fmt"
 	"gin_log/entity"
 )
 
@@ -24,6 +23,5 @@ func DealLogs(logs []entity.LogContent) {
 			nginxHandle := entity.NginxLogHandler{&v}
 			nginxHandle.CountLog()
 		}
-		fmt.Println(v)
 	}
 }
