@@ -18,7 +18,3 @@ func InitConfig() {
 		panic(fmt.Sprintf("配置读取失败 %s", err.Error()))
 	}
 }
-
-func GetConfigWithProjectEnv(projectEnv string, configKey string) map[string]interface{} {
-	return Config.GetStringMap (projectEnv + "." + configKey)
-}

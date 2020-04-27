@@ -45,11 +45,16 @@ func (lh *LogHandler) AnalysisTag() bool {
 	for _, value := range lh.Log.Tags {
 		if strings.Contains(value, "project_") {
 			project := strings.Split(value, "_")
-			if len(project) < 3 {
+			len := len(project)
+			if len < 2 {
 				return false
 			}
 			lh.Log.Project = project[1]
-			lh.Log.ProjectEnv = project[2]
+			if len == 3 {
+				lh.Log.ProjectEnv = project[2]
+			} else {
+				lh.Log.ProjectEnv = "default"
+			}
 		}
 
 		// 日志类型
