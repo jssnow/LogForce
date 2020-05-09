@@ -9,6 +9,11 @@ var ErrorCountWithLock = entity.BusinessLogCountResult{
 	Data: make(map[string]map[string]map[string]map[string]int),
 }
 
+var AnalysisResults = entity.InterfaceAnalysisMap{
+	InterfaceAnalysisResult: make(map[string]entity.InterfaceAnalysis),
+}
+
+
 // 处理日志逻辑
 func DealLogs(logs []entity.LogContent) {
 	for _, v := range logs {
@@ -26,8 +31,8 @@ func DealLogs(logs []entity.LogContent) {
 			common.Log.Info(businessHandle.CountResult.Data)
 			break
 		case "nginx":
-			nginxHandle := entity.NginxLogHandler{&v}
-			nginxHandle.CountLog()
+			nginxHandle := entity.NginxLogHandler{&v, &AnalysisResults}
+			nginxHandle.Count()
 		}
 	}
 

@@ -2,9 +2,9 @@ package services
 
 import "gin_log/common"
 
-//启动发送协程
+// 启动发送协程
 func SendWarnService() {
-	//默认启动10个
+	// 默认启动10个
 	numInt := 10
 	maiNum := common.Config.GetInt("send_mail_goroutines_num")
 	dingDingNum := common.Config.GetInt("send_dingding_goroutines_num")
@@ -23,4 +23,7 @@ func SendWarnService() {
 	for i := 0; i < numInt; i++ {
 		go SendDingDing()
 	}
+
+	// 启动定时刷新统计结果到mysql协程
+	go Cron()
 }

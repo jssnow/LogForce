@@ -1,8 +1,9 @@
 package models
 
 type BusinessLogErrorCount struct {
-	Id         int
+	ID         int
 	App        string
+	Env        string
 	ModuleName string
 	Level      string
 	Count      int
@@ -10,7 +11,7 @@ type BusinessLogErrorCount struct {
 
 type LogAppAccess struct {
 	Id            int
-	App       string
+	App           string
 	Url           string
 	AccessCount   int
 	AccessAvgTime float64
