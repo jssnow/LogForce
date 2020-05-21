@@ -1,7 +1,6 @@
 package entity
 
 import (
-	"fmt"
 	"gin_log/common"
 	"net/url"
 	"strconv"
@@ -17,7 +16,7 @@ type NginxLogInterface interface {
 
 type NginxLogHandler struct {
 	Inputs      *LogContent
-	CountResult *InterfaceAnalysisMap
+	CountResult *NginxAnalysisMap
 }
 
 type NginxAccessLogInfo struct {
@@ -28,7 +27,7 @@ type NginxAccessLogInfo struct {
 }
 
 //统计分析结果暂存内存中
-type InterfaceAnalysis struct {
+type NginxAnalysis struct {
 	//访问次数
 	UrlCount map[string]int
 	//平均请求时间
@@ -40,8 +39,8 @@ type InterfaceAnalysis struct {
 }
 
 //nginx分析结果带锁
-type InterfaceAnalysisMap struct {
-	InterfaceAnalysisResult map[string]InterfaceAnalysis
+type NginxAnalysisMap struct {
+	NginxAnalysisResult map[string]map[string]NginxAnalysis
 	sync.RWMutex
 }
 
@@ -70,9 +69,13 @@ func (nlh *NginxLogHandler) Count() bool {
 
 	/****************** 统计分析结果 ********************/
 	nlh.CountResult.Lock()
-	if _, ok := nlh.CountResult.InterfaceAnalysisResult[nlh.Inputs.Project]; !ok {
-		//初始化
-		nlh.CountResult.InterfaceAnalysisResult[nlh.Inputs.Project] = InterfaceAnalysis{
+	if _, ok := nlh.CountResult.NginxAnalysisResult[nlh.Inputs.Project]; !ok {
+		nlh.CountResult.NginxAnalysisResult[nlh.Inputs.Project] = make(map[string]NginxAnalysis)
+
+	}
+
+	if _, ok := nlh.CountResult.NginxAnalysisResult[nlh.Inputs.Project][nlh.Inputs.ProjectEnv]; !ok {
+		nlh.CountResult.NginxAnalysisResult[nlh.Inputs.Project][nlh.Inputs.ProjectEnv] = NginxAnalysis{
 			UrlCount:       make(map[string]int),
 			UrlTimeAverage: make(map[string]float64),
 			UrlTimeMax:     make(map[string]float64),
@@ -81,7 +84,7 @@ func (nlh *NginxLogHandler) Count() bool {
 	}
 
 	//记录接口请求的数量
-	analysisResult := nlh.CountResult.InterfaceAnalysisResult[nlh.Inputs.Project]
+	analysisResult := nlh.CountResult.NginxAnalysisResult[nlh.Inputs.Project][nlh.Inputs.ProjectEnv]
 	analysisResult.UrlCount[accessLog.Path] += 1
 	//记录接口的所求请求时间,持久化时用来计算平均响应时间
 	analysisResult.UrlTimeAverage[accessLog.Path] += accessLog.RequestTime
@@ -99,8 +102,8 @@ func (nlh *NginxLogHandler) Count() bool {
 	}
 
 	//统计完成
-	nlh.CountResult.InterfaceAnalysisResult[nlh.Inputs.Project] = analysisResult
-	fmt.Println(nlh.CountResult.InterfaceAnalysisResult)
+	nlh.CountResult.NginxAnalysisResult[nlh.Inputs.Project][nlh.Inputs.ProjectEnv] = analysisResult
+	common.Log.Info(nlh.CountResult.NginxAnalysisResult)
 	nlh.CountResult.Unlock()
 	return true
 }

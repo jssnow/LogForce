@@ -66,16 +66,13 @@ func (blh *BusinessLogHandler) Counter() bool {
 		//加锁
 		blh.CountResult.Lock()
 		if _, ok := blh.CountResult.Data[blh.Inputs.Project]; !ok {
-			moduleMap := make(map[string]map[string]map[string]int)
-			blh.CountResult.Data[blh.Inputs.Project] = moduleMap
+			blh.CountResult.Data[blh.Inputs.Project] = make(map[string]map[string]map[string]int)
 		}
 		if _, ok := blh.CountResult.Data[blh.Inputs.Project][blh.Inputs.ModuleName]; !ok {
-			levelMap := make(map[string]map[string]int)
-			blh.CountResult.Data[blh.Inputs.Project][blh.Inputs.ModuleName] = levelMap
+			blh.CountResult.Data[blh.Inputs.Project][blh.Inputs.ModuleName] = make(map[string]map[string]int)
 		}
 		if _, ok := blh.CountResult.Data[blh.Inputs.Project][blh.Inputs.ModuleName][blh.Inputs.ProjectEnv]; !ok {
-			envMap := make(map[string]int)
-			blh.CountResult.Data[blh.Inputs.Project][blh.Inputs.ModuleName][blh.Inputs.ProjectEnv] = envMap
+			blh.CountResult.Data[blh.Inputs.Project][blh.Inputs.ModuleName][blh.Inputs.ProjectEnv] = make(map[string]int)
 		}
 
 		blh.CountResult.Data[blh.Inputs.Project][blh.Inputs.ModuleName][blh.Inputs.ProjectEnv][blh.Inputs.Level]++

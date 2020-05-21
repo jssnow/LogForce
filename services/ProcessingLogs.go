@@ -5,14 +5,13 @@ import (
 	"gin_log/entity"
 )
 
-var ErrorCountWithLock = entity.BusinessLogCountResult{
+var LogCountWithLock = entity.BusinessLogCountResult{
 	Data: make(map[string]map[string]map[string]map[string]int),
 }
 
-var AnalysisResults = entity.InterfaceAnalysisMap{
-	InterfaceAnalysisResult: make(map[string]entity.InterfaceAnalysis),
+var NginxCountWithLock = entity.NginxAnalysisMap{
+	NginxAnalysisResult: make(map[string]map[string]entity.NginxAnalysis),
 }
-
 
 // 处理日志逻辑
 func DealLogs(logs []entity.LogContent) {
@@ -25,16 +24,16 @@ func DealLogs(logs []entity.LogContent) {
 
 		switch v.Type {
 		case "business":
-			businessHandle := entity.BusinessLogHandler{&v, &ErrorCountWithLock}
+			businessHandle := entity.BusinessLogHandler{&v, &LogCountWithLock}
 			businessHandle.Counter()
 			businessHandle.SendNotice()
 			common.Log.Info(businessHandle.CountResult.Data)
 			break
 		case "nginx":
-			nginxHandle := entity.NginxLogHandler{&v, &AnalysisResults}
+			nginxHandle := entity.NginxLogHandler{&v, &NginxCountWithLock}
 			nginxHandle.Count()
+			break
 		}
 	}
-
 
 }

@@ -12,6 +12,7 @@ type BusinessLogErrorCount struct {
 type LogAppAccess struct {
 	Id            int
 	App           string
+	Env           string
 	Url           string
 	AccessCount   int
 	AccessAvgTime float64
