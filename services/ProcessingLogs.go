@@ -25,13 +25,18 @@ func DealLogs(logs []entity.LogContent) {
 		switch v.Type {
 		case "business":
 			businessHandle := entity.BusinessLogHandler{&v, &LogCountWithLock}
-			businessHandle.Counter()
-			businessHandle.SendNotice()
-			common.Log.Info(businessHandle.CountResult.Data)
+			if common.OpenBusinessCount {
+				businessHandle.Count()
+			}
+			if common.OpenNotice {
+				businessHandle.SendNotice()
+			}
 			break
 		case "nginx":
-			nginxHandle := entity.NginxLogHandler{&v, &NginxCountWithLock}
-			nginxHandle.Count()
+			if common.OpenNginxCount {
+				nginxHandle := entity.NginxLogHandler{&v, &NginxCountWithLock}
+				nginxHandle.Count()
+			}
 			break
 		}
 	}

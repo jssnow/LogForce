@@ -11,7 +11,7 @@ import (
 
 // 业务日志处理接口
 type BusinessLogInterface interface {
-	Counter() bool
+	Count() bool
 	SendNotice() bool
 	DingDingFormat([]string) DingDingContent
 	MailFormat([]string) MailContent
@@ -51,7 +51,7 @@ var DingDingSendChan = make(chan DingDingContent, 200)
 var dingLimit = rate.NewLimiter(0.3, 1)
 
 // 统计业务日志数量
-func (blh *BusinessLogHandler) Counter() bool {
+func (blh *BusinessLogHandler) Count() bool {
 	// 获取配置中需要统计的日志级别
 	CountErrorLevel := common.Config.GetStringSlice(blh.Inputs.ProjectEnv + ".business_log_count_level")
 	// 如果没有配置则统计所有级别的错误

@@ -9,8 +9,6 @@ import (
 	_ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
-
-
 func main() {
 	// 初始化配置
 	common.InitConfig()
@@ -24,24 +22,39 @@ func main() {
 	// 注册所有路由
 	r := routers.APIRouter()
 
-	// 启动发送邮件和钉钉的协程
-	services.SendWarnService()
-
-	// 连接数据库
-	var err error
-	// 添加前缀
-	gorm.DefaultTableNameHandler = func(db *gorm.DB, defaultTableName string) string {
-		return "ts_" + defaultTableName;
-	}
-	common.Db, err = gorm.Open("mysql", common.GetDbConfigString())
-	if err != nil {
-		common.Log.Error(err)
-	}
-	defer common.Db.Close()
-	// 禁止表名加s
-	common.Db.SingularTable(true)
+	initNotice()
+	initCount()
 
 	// 获取监听端口
 	port := common.Config.GetString("port")
 	r.Run("127.0.0.1:" + port)
+}
+
+// 初始化错误通知
+func initNotice() {
+	if common.OpenNotice {
+		// 启动发送邮件和钉钉的协程
+		services.SendWarnService()
+	}
+}
+
+// 初始化日志统计
+func initCount() {
+	if common.OpenBusinessCount || common.OpenNginxCount {
+		// 连接数据库
+		var err error
+		// 添加前缀
+		gorm.DefaultTableNameHandler = func(db *gorm.DB, defaultTableName string) string {
+			return "ts_" + defaultTableName;
+		}
+		common.Db, err = gorm.Open("mysql", common.GetDbConfigString())
+		if err != nil {
+			common.Log.Error(err)
+		}
+		defer common.Db.Close()
+		// 禁止表名加s
+		common.Db.SingularTable(true)
+		// 启动定时刷新统计结果到mysql协程
+		go services.Cron()
+	}
 }

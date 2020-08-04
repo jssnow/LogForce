@@ -40,28 +40,16 @@ func Logger(logger logrus.FieldLogger) gin.HandlerFunc {
 			dataLength = 0
 		}
 
-		entry := logger.WithFields(logrus.Fields{
-			"hostname":   hostname,
-			"statusCode": statusCode,
-			"latency":    latency, // time to process
-			"clientIP":   clientIP,
-			"method":     c.Request.Method,
-			"path":       path,
-			"referer":    referer,
-			"dataLength": dataLength,
-			"userAgent":  clientUserAgent,
-		})
-
 		if len(c.Errors) > 0 {
-			entry.Error(c.Errors.ByType(gin.ErrorTypePrivate).String())
+			logger.Error(c.Errors.ByType(gin.ErrorTypePrivate).String())
 		} else {
-			msg := fmt.Sprintf("%s - %s [%s] \"%s %s\" %d %d \"%s\" \"%s\" (%dms)", clientIP, hostname, time.Now().Format(timeFormat), c.Request.Method, path, statusCode, dataLength, referer, clientUserAgent, latency)
+			msg := fmt.Sprintf("%s - %s \"%s %s\" %d %d \"%s\" \"%s\" (%dms)", clientIP, hostname, c.Request.Method, path, statusCode, dataLength, referer, clientUserAgent, latency)
 			if statusCode > 499 {
-				entry.Error(msg)
+				logger.Error(msg)
 			} else if statusCode > 399 {
-				entry.Warn(msg)
+				logger.Warn(msg)
 			} else {
-				entry.Info(msg)
+				logger.Info(msg)
 			}
 		}
 	}

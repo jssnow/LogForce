@@ -14,6 +14,12 @@ var Log = log.New()
 func InitLog() {
 	// 获取日志输出方式
 	t := Config.GetString("log.out_type")
+	Log.SetFormatter(&log.TextFormatter{
+		ForceColors:     true,
+		DisableColors:   false,
+		FullTimestamp:   true,
+		TimestampFormat: "2006-01-02 15:04:05",
+	})
 	switch t {
 	case "file":
 		logFilePath := "./runtime/log"

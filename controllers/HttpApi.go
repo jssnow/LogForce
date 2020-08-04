@@ -1,9 +1,11 @@
 package controllers
 
 import (
+	"gin_log/common"
 	"gin_log/entity"
 	"gin_log/services"
 	"github.com/gin-gonic/gin"
+	"runtime"
 )
 
 // 接收日志控制器
@@ -24,6 +26,10 @@ func ReceiveLog(c *gin.Context) {
 		return
 	}
 	services.DealLogs(jsonInputs)
+
+	common.Log.Infof("成功收到并处理处理%d条日志", len(jsonInputs))
+	//监控是否有goroutine泄露
+	common.Log.Infof("the number of goroutines: %d", runtime.NumGoroutine())
 
 	c.JSON(200, gin.H{
 		"message": "成功!",

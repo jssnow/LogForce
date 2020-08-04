@@ -23,7 +23,4 @@ func SendWarnService() {
 	for i := 0; i < numInt; i++ {
 		go SendDingDing()
 	}
-
-	// 启动定时刷新统计结果到mysql协程
-	go Cron()
 }
