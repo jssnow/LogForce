@@ -3,7 +3,7 @@ package entity
 import (
 	"encoding/json"
 	"fmt"
-	"gin_log/common"
+	"LogForce/common"
 	"golang.org/x/time/rate"
 	"strings"
 	"sync"

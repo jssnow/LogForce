@@ -1,7 +1,7 @@
 package entity
 
 import (
-	"gin_log/common"
+	"LogForce/common"
 	"net/url"
 	"strconv"
 	"strings"

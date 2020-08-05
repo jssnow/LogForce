@@ -1,8 +1,8 @@
 package services
 
 import (
-	"gin_log/common"
-	"gin_log/entity"
+	"LogForce/common"
+	"LogForce/entity"
 	"gopkg.in/gomail.v2"
 	"strconv"
 )

@@ -1,6 +1,6 @@
 package services
 
-import "gin_log/common"
+import "LogForce/common"
 
 // 启动发送协程
 func SendWarnService() {

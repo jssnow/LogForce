@@ -2,9 +2,9 @@ package services
 
 import (
 	"fmt"
-	"gin_log/common"
-	"gin_log/entity"
-	"gin_log/models"
+	"LogForce/common"
+	"LogForce/entity"
+	"LogForce/models"
 	"time"
 )
 

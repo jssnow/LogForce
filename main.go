@@ -1,9 +1,9 @@
 package main
 
 import (
-	"gin_log/common"
-	"gin_log/routers"
-	"gin_log/services"
+	"LogForce/common"
+	"LogForce/routers"
+	"LogForce/services"
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/gorm"
 	_ "github.com/jinzhu/gorm/dialects/mysql"
@@ -22,12 +22,13 @@ func main() {
 	// 注册所有路由
 	r := routers.APIRouter()
 
+
 	initNotice()
 	initCount()
 
 	// 获取监听端口
 	port := common.Config.GetString("port")
-	r.Run("127.0.0.1:" + port)
+	r.Run("0.0.0.0:" + port)
 }
 
 // 初始化错误通知

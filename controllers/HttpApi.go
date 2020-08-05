@@ -1,9 +1,9 @@
 package controllers
 
 import (
-	"gin_log/common"
-	"gin_log/entity"
-	"gin_log/services"
+	"LogForce/common"
+	"LogForce/entity"
+	"LogForce/services"
 	"github.com/gin-gonic/gin"
 	"runtime"
 )

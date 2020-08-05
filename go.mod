@@ -1,4 +1,4 @@
-module gin_log
+module LogForce
 
 go 1.14
 

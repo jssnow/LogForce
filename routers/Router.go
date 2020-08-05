@@ -1,9 +1,9 @@
 package routers
 
 import (
-	"gin_log/common"
-	"gin_log/controllers"
-	"gin_log/middleware"
+	"LogForce/common"
+	"LogForce/controllers"
+	"LogForce/middleware"
 	"github.com/gin-gonic/gin"
 )
 

@@ -2,8 +2,8 @@ package services
 
 import (
 	"bytes"
-	"gin_log/common"
-	"gin_log/entity"
+	"LogForce/common"
+	"LogForce/entity"
 	"net/http"
 )
 
