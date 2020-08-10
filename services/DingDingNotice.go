@@ -1,15 +1,15 @@
 package services
 
 import (
-	"bytes"
-	"LogForce/common"
 	"LogForce/entity"
+	"bytes"
+	log "github.com/sirupsen/logrus"
 	"net/http"
 )
 
 //发送钉钉
 func SendDingDing() {
-	common.Log.Info("发送钉钉协程启动")
+	log.Info("发送钉钉协程启动")
 	for {
 		select {
 		case dingString := <-entity.DingDingSendChan:
@@ -20,9 +20,9 @@ func SendDingDing() {
 					resp, err := http.Post(dingDingURL, "application/json", bytes.NewBuffer(dingString.Content))
 					//body, err := ioutil.ReadAll(resp.Body)
 					if err != nil || resp.StatusCode != 200 {
-						common.Log.Error("报警钉钉发送请求失败:")
+						log.Error("报警钉钉发送请求失败:")
 					} else {
-						common.Log.Info("报警钉钉发送请求成功")
+						log.Info("报警钉钉发送请求成功")
 					}
 					resp.Body.Close()
 				}

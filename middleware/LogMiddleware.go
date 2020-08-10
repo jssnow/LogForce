@@ -3,22 +3,16 @@ package middleware
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"github.com/sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"math"
 	"os"
 	"time"
 )
 
-// 2016-09-27 09:38:21.541541811 +0200 CEST
-// 127.0.0.1 - frank [10/Oct/2000:13:55:36 -0700]
-// "GET /apache_pb.gif HTTP/1.0" 200 2326
-// "http://www.example.com/start.html"
-// "Mozilla/4.08 [en] (Win98; I ;Nav)"
-
 var timeFormat = "02/Jan/2006:15:04:05 -0700"
 
 // Logger is the logrus logger handler
-func Logger(logger logrus.FieldLogger) gin.HandlerFunc {
+func Logger() gin.HandlerFunc {
 
 	hostname, err := os.Hostname()
 	if err != nil {
@@ -41,15 +35,15 @@ func Logger(logger logrus.FieldLogger) gin.HandlerFunc {
 		}
 
 		if len(c.Errors) > 0 {
-			logger.Error(c.Errors.ByType(gin.ErrorTypePrivate).String())
+			log.Error(c.Errors.ByType(gin.ErrorTypePrivate).String())
 		} else {
 			msg := fmt.Sprintf("%s - %s \"%s %s\" %d %d \"%s\" \"%s\" (%dms)", clientIP, hostname, c.Request.Method, path, statusCode, dataLength, referer, clientUserAgent, latency)
 			if statusCode > 499 {
-				logger.Error(msg)
+				log.Error(msg)
 			} else if statusCode > 399 {
-				logger.Warn(msg)
+				log.Warn(msg)
 			} else {
-				logger.Info(msg)
+				log.Info(msg)
 			}
 		}
 	}

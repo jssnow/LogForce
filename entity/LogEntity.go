@@ -2,6 +2,7 @@ package entity
 
 import (
 	"strings"
+	"sync"
 )
 
 type LogContent struct {
@@ -24,6 +25,8 @@ type LogContent struct {
 	ProjectEnv string
 	// 日志类型
 	Type string
+	// 该条日志的长度
+	ContentLength int
 }
 
 // 公共处理接口
@@ -33,7 +36,14 @@ type LogInterface interface {
 
 // 日志公共处理
 type LogHandler struct {
-	Log *LogContent
+	Log     *LogContent
+	Monitor *Monitor
+}
+
+type Monitor struct {
+	sync.RWMutex
+	Num           int
+	ContentLength int
 }
 
 // 处理日志的tag
@@ -66,5 +76,15 @@ func (lh *LogHandler) AnalysisTag() bool {
 	if lh.Log.Type == "" {
 		return false
 	}
+	return true
+}
+
+// 监控
+func (lh *LogHandler) DoMonitor() bool {
+	// 监控数据
+	lh.Monitor.Lock()
+	lh.Monitor.Num += 1
+	lh.Monitor.ContentLength += lh.Log.ContentLength
+	lh.Monitor.Unlock()
 	return true
 }

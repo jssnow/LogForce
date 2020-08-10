@@ -1,10 +1,10 @@
 package controllers
 
 import (
-	"LogForce/common"
 	"LogForce/entity"
 	"LogForce/services"
 	"github.com/gin-gonic/gin"
+	log "github.com/sirupsen/logrus"
 	"runtime"
 )
 
@@ -25,11 +25,12 @@ func ReceiveLog(c *gin.Context) {
 		})
 		return
 	}
+	// http 一个请求中包含多条日志
 	services.DealLogs(jsonInputs)
 
-	common.Log.Infof("成功收到并处理处理%d条日志", len(jsonInputs))
+	log.Infof("成功收到并处理处理%d条日志", len(jsonInputs))
 	//监控是否有goroutine泄露
-	common.Log.Infof("the number of goroutines: %d", runtime.NumGoroutine())
+	log.Infof("the number of goroutines: %d", runtime.NumGoroutine())
 
 	c.JSON(200, gin.H{
 		"message": "成功!",

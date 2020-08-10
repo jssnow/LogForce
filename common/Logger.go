@@ -8,13 +8,15 @@ import (
 )
 
 // 全局日志变量
-var Log = log.New()
+//var Log = log.New()
 
 // 初始化配置读取
 func InitLog() {
+	logInstance := log.New()
 	// 获取日志输出方式
 	t := Config.GetString("log.out_type")
-	Log.SetFormatter(&log.TextFormatter{
+	log.SetLevel(log.InfoLevel)
+	log.SetFormatter(&log.TextFormatter{
 		ForceColors:     true,
 		DisableColors:   false,
 		FullTimestamp:   true,
@@ -38,14 +40,14 @@ func InitLog() {
 		if err != nil {
 			fmt.Println("err", err)
 		}
-		Log.Out = src
+		logInstance.Out = src
 		break
 	case "console":
 		// 输出控制台
-		Log.Out = os.Stdout
+		logInstance.Out = os.Stdout
 		break
 	default:
-		Log.Out = os.Stdout
+		logInstance.Out = os.Stdout
 		break
 	}
 }

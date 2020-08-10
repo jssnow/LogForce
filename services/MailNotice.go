@@ -3,17 +3,18 @@ package services
 import (
 	"LogForce/common"
 	"LogForce/entity"
+	log "github.com/sirupsen/logrus"
 	"gopkg.in/gomail.v2"
 	"strconv"
 )
 
 //发送邮件方法
 func SendMail() {
-	common.Log.Info("发送邮件协程启动")
+	log.Info("发送邮件协程启动")
 	//获取发送邮件的配置
 	mConfig := common.Config.GetStringMapString("email")
 	if mConfig == nil {
-		common.Log.Error("缺少邮件发送配置")
+		log.Error("缺少邮件发送配置")
 	}
 
 	for {
@@ -32,9 +33,9 @@ func SendMail() {
 
 				// 发送
 				if err := d.DialAndSend(m); err != nil {
-					common.Log.Error(err)
+					log.Error(err)
 				}
-				common.Log.Info("报警邮件发送成功")
+				log.Info("报警邮件发送成功")
 			}
 
 		}

@@ -13,32 +13,40 @@ var NginxCountWithLock = entity.NginxAnalysisMap{
 	NginxAnalysisResult: make(map[string]map[string]entity.NginxAnalysis),
 }
 
+var MonitorInfo = entity.Monitor{Num: 0, ContentLength: 0}
+
 // 处理日志逻辑
 func DealLogs(logs []entity.LogContent) {
 	for _, v := range logs {
-		logHandle := entity.LogHandler{&v}
-		res := logHandle.AnalysisTag()
-		if !res {
-			break
-		}
+		DoDealLog(v)
+	}
+}
 
-		switch v.Type {
-		case "business":
-			businessHandle := entity.BusinessLogHandler{&v, &LogCountWithLock}
-			if common.OpenBusinessCount {
-				businessHandle.Count()
-			}
-			if common.OpenNotice {
-				businessHandle.SendNotice()
-			}
-			break
-		case "nginx":
-			if common.OpenNginxCount {
-				nginxHandle := entity.NginxLogHandler{&v, &NginxCountWithLock}
-				nginxHandle.Count()
-			}
-			break
-		}
+// 执行处理日志
+func DoDealLog(singleLog entity.LogContent) {
+	logHandle := entity.LogHandler{&singleLog, &MonitorInfo}
+	// 监控系统吞吐量
+	logHandle.DoMonitor()
+	res := logHandle.AnalysisTag()
+	if !res {
+		return
 	}
 
+	switch singleLog.Type {
+	case "business":
+		businessHandle := entity.BusinessLogHandler{&singleLog, &LogCountWithLock}
+		if common.OpenBusinessCount {
+			businessHandle.Count()
+		}
+		if common.OpenNotice {
+			businessHandle.SendNotice()
+		}
+		break
+	case "nginx":
+		if common.OpenNginxCount {
+			nginxHandle := entity.NginxLogHandler{&singleLog, &NginxCountWithLock}
+			nginxHandle.Count()
+		}
+		break
+	}
 }

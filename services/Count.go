@@ -1,10 +1,11 @@
 package services
 
 import (
-	"fmt"
 	"LogForce/common"
 	"LogForce/entity"
 	"LogForce/models"
+	"fmt"
+	log "github.com/sirupsen/logrus"
 	"time"
 )
 
@@ -45,20 +46,20 @@ func countErrorService() {
 		LogCountWithLock.Unlock()
 		if len(logs) > 0 {
 			// TODO gorm包2.0版本会支持批量插入功能,此处修改为批量插入
-			for _, log := range logs {
+			for _, v := range logs {
 				//持久化分析结果
-				err := common.Db.Create(&log).Error
+				err := common.Db.Create(&v).Error
 				if err != nil {
-					common.Log.Error(err)
+					log.Error(err)
 				}
 			}
-			common.Log.Info(fmt.Sprintf("成功写入错误统计日志:%v", logs))
+			log.Info(fmt.Sprintf("成功写入错误统计日志:%v", logs))
 		} else {
-			common.Log.Info("无错误日志统计数据")
+			log.Info("无错误日志统计数据")
 		}
 
 	} else {
-		common.Log.Info("无业务错误日志统计数据")
+		log.Info("无业务错误日志统计数据")
 	}
 
 	//持久化nginx日志分析结果
@@ -92,19 +93,19 @@ func countErrorService() {
 		NginxCountWithLock.NginxAnalysisResult = make(map[string]map[string]entity.NginxAnalysis)
 		NginxCountWithLock.Unlock()
 		if len(logs) > 0 {
-			for _, log := range logs {
+			for _, v := range logs {
 				//持久化分析结果
-				err := common.Db.Create(&log).Error
+				err := common.Db.Create(&v).Error
 				if err != nil {
-					common.Log.Error(err)
+					log.Error(err)
 				}
 			}
-			common.Log.Info(fmt.Sprintf("成功写入nginx access log统计日志:%v", logs))
+			log.Info(fmt.Sprintf("成功写入nginx access log统计日志:%v", logs))
 		} else {
-			common.Log.Info("无nginx access log日志统计可写入数据")
+			log.Info("无nginx access log日志统计可写入数据")
 		}
 	} else {
-		common.Log.Info("无nginx access log日志统计数据")
+		log.Info("无nginx access log日志统计数据")
 	}
 
 	return

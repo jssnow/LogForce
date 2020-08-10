@@ -1,9 +1,10 @@
 package entity
 
 import (
+	"LogForce/common"
 	"encoding/json"
 	"fmt"
-	"LogForce/common"
+	log "github.com/sirupsen/logrus"
 	"golang.org/x/time/rate"
 	"strings"
 	"sync"
@@ -106,7 +107,7 @@ func (blh *BusinessLogHandler) SendNotice() bool {
 							//发送钉钉
 							DingDingSendChan <- ding
 						} else {
-							common.Log.Error("钉钉发送频率过快,已限制错误通知速度")
+							log.Error("钉钉发送频率过快,已限制错误通知速度")
 						}
 					}
 				}
@@ -146,7 +147,7 @@ func (blh *BusinessLogHandler) DingDingFormat(dingTokens []string) DingDingConte
 	dingFormat.Markdown["text"] = text
 	dingJson, err := json.Marshal(dingFormat)
 	if err != nil {
-		common.Log.Error(err)
+		log.Error(err)
 	}
 
 	return DingDingContent{

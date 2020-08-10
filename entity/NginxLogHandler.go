@@ -1,7 +1,7 @@
 package entity
 
 import (
-	"LogForce/common"
+	log "github.com/sirupsen/logrus"
 	"net/url"
 	"strconv"
 	"strings"
@@ -53,7 +53,7 @@ func (nlh *NginxLogHandler) Count() bool {
 	//处理url
 	reqSli := strings.Split(nlh.Inputs.RequestUrl, " ")
 	if len(reqSli) != 3 {
-		common.Log.Info("nginx日志中接口不符合规则:", nlh.Inputs.RequestUrl)
+		log.Info("nginx日志中接口不符合规则:", nlh.Inputs.RequestUrl)
 		return true
 	}
 	//请求的类型
@@ -61,7 +61,7 @@ func (nlh *NginxLogHandler) Count() bool {
 
 	u, err := url.Parse(reqSli[1])
 	if err != nil {
-		common.Log.Info("url解析失败:", err)
+		log.Info("url解析失败:", err)
 		return true
 	}
 	//路径
@@ -103,7 +103,7 @@ func (nlh *NginxLogHandler) Count() bool {
 
 	//统计完成
 	nlh.CountResult.NginxAnalysisResult[nlh.Inputs.Project][nlh.Inputs.ProjectEnv] = analysisResult
-	common.Log.Info(nlh.CountResult.NginxAnalysisResult)
+	log.Info(nlh.CountResult.NginxAnalysisResult)
 	nlh.CountResult.Unlock()
 	return true
 }
