@@ -2,9 +2,6 @@ package services
 
 import (
 	"fmt"
-	log "github.com/sirupsen/logrus"
-	"runtime"
-	"time"
 )
 
 const (
@@ -17,23 +14,34 @@ const (
 )
 
 // 程序内部监控
-func InitMonitor() {
-	// 定时输出(1分钟)
-	ticker := time.NewTicker(time.Second * 60)
-	for {
-		<-ticker.C
-		// 携程数量
-		log.Infof("the number of goroutines: %d", runtime.NumGoroutine())
-		MonitorInfo.Lock()
-		// 日志数量
-		log.Infof("最近一分钟日志数: %d", MonitorInfo.Num)
-		log.Infof("吞吐量: %d", MonitorInfo.Num/60)
-		// 日志大小
-		log.Infof("最近一分钟日志大小: %s", formatFileSize(MonitorInfo.ContentLength))
-		MonitorInfo.Num = 0
-		MonitorInfo.ContentLength = 0
-		MonitorInfo.Unlock()
-	}
+//func InitMonitor() {
+//
+//	// 定时输出(1分钟)
+//	ticker := time.NewTicker(time.Second * 60)
+//	for {
+//		<-ticker.C
+//		// 携程数量
+//		log.Infof("the number of goroutines: %d", runtime.NumGoroutine())
+//		MonitorInfo.Lock()
+//		// 日志数量
+//		log.Infof("最近一分钟日志数: %d", MonitorInfo.Num)
+//		log.Infof("吞吐量: %d", MonitorInfo.Num/60)
+//		// 日志大小
+//		log.Infof("最近一分钟日志大小: %s", formatFileSize(MonitorInfo.ContentLength))
+//		MonitorInfo.Num = 0
+//		MonitorInfo.ContentLength = 0
+//		MonitorInfo.Unlock()
+//	}
+//}
+
+// 获取系统监控数据
+func GetMonitorData() (num int, qps int, size string) {
+	MonitorInfo.Lock()
+	num = MonitorInfo.Num
+	qps = num / 60
+	size = formatFileSize(MonitorInfo.ContentLength)
+	MonitorInfo.Unlock()
+	return num, qps, size
 }
 
 // 字节的单位转换 保留两位小数

@@ -21,7 +21,7 @@ func main() {
 
 	initNotice()
 	initCount()
-	go services.InitMonitor()
+	go initMonitor()
 
 	mode := common.Config.Get("data_receiving_mode")
 	log.Infof("数据接收方式%s", mode)
@@ -30,7 +30,6 @@ func main() {
 	case "tcp":
 		var events evio.Events
 		events.Data = func(c evio.Conn, in []byte) (out []byte, action evio.Action) {
-
 			controllers.TcpReceiveLog(in)
 			return
 		}
@@ -83,4 +82,14 @@ func initCount() {
 		// 启动定时刷新统计结果到mysql协程
 		go services.Cron()
 	}
+}
+
+// 启一个http服务用来获取服务监控信息
+func initMonitor() {
+	// 注册所有路由
+	r := routers.MonitorRouter()
+
+	// 获取监听端口
+	monitorPort := common.Config.GetString("monitor_http_port")
+	r.Run("0.0.0.0:" + monitorPort)
 }
