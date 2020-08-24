@@ -91,7 +91,6 @@ func (blh *BusinessLogHandler) SendNotice() bool {
 	if len(WarnErrorLevel) > 0 {
 		//对不同的错误级别发送不同的警报
 		if common.IsStringExistsInSlice(blh.Inputs.Level, WarnErrorLevel) {
-			fmt.Println(ErrorNoticeSend)
 			if ErrorNoticeSend != nil {
 				// 取出对应模块的配置
 				for k, v := range ErrorNoticeSend {

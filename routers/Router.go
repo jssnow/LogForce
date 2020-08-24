@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-// 业务
+// http receive log api
 func APIRouter() *gin.Engine {
 	r := gin.New()
 	r.Use(middleware.Logger())
@@ -14,6 +14,7 @@ func APIRouter() *gin.Engine {
 	return r
 }
 
+// system monitoring api
 func MonitorRouter() *gin.Engine {
 	r := gin.New()
 	r.Use(middleware.Logger())

@@ -2,6 +2,9 @@ package services
 
 import (
 	"fmt"
+	"runtime"
+	"sync"
+	"time"
 )
 
 const (
@@ -13,39 +16,49 @@ const (
 	PiB // 1125899906842624
 )
 
-// 程序内部监控
-//func InitMonitor() {
-//
-//	// 定时输出(1分钟)
-//	ticker := time.NewTicker(time.Second * 60)
-//	for {
-//		<-ticker.C
-//		// 携程数量
-//		log.Infof("the number of goroutines: %d", runtime.NumGoroutine())
-//		MonitorInfo.Lock()
-//		// 日志数量
-//		log.Infof("最近一分钟日志数: %d", MonitorInfo.Num)
-//		log.Infof("吞吐量: %d", MonitorInfo.Num/60)
-//		// 日志大小
-//		log.Infof("最近一分钟日志大小: %s", formatFileSize(MonitorInfo.ContentLength))
-//		MonitorInfo.Num = 0
-//		MonitorInfo.ContentLength = 0
-//		MonitorInfo.Unlock()
-//	}
-//}
-
-// 获取系统监控数据
-func GetMonitorData() (num int, qps int, size string) {
-	MonitorInfo.Lock()
-	num = MonitorInfo.Num
-	qps = num / 60
-	size = formatFileSize(MonitorInfo.ContentLength)
-	MonitorInfo.Unlock()
-	return num, qps, size
+type MonitorOut struct {
+	RecordTime    time.Time
+	Num           int
+	ContentLength string
+	Goroutines    int
 }
 
-// 字节的单位转换 保留两位小数
-func formatFileSize(fileSize int) (size string) {
+type MonitorOutMap struct {
+	MonitorOutResult []MonitorOut
+	sync.RWMutex
+}
+
+var MonitorOutMapWithLock = MonitorOutMap{
+	MonitorOutResult: []MonitorOut{},
+}
+
+// Initialize monitoring timing task
+func InitMonitorCron() {
+	ticker := time.NewTicker(time.Minute * 5)
+	for {
+		<-ticker.C
+
+		MonitorInfo.Lock()
+		out := MonitorOut{time.Now(), MonitorInfo.Num, FormatFileSize(MonitorInfo.ContentLength), runtime.NumGoroutine()}
+		MonitorInfo.ContentLength = 0
+		MonitorInfo.Num = 0
+		MonitorInfo.Unlock()
+
+		MonitorOutMapWithLock.Lock()
+		MonitorOutMapWithLock.MonitorOutResult = append(MonitorOutMapWithLock.MonitorOutResult, out)
+		MonitorOutMapWithLock.Unlock()
+	}
+}
+
+func GetMonitorData() []MonitorOut {
+	MonitorOutMapWithLock.Lock()
+	result := MonitorOutMapWithLock.MonitorOutResult
+	MonitorOutMapWithLock.Unlock()
+	return result
+}
+
+// two decimal places
+func FormatFileSize(fileSize int) (size string) {
 	if fileSize < KiB {
 		return fmt.Sprintf("%dB", fileSize)
 	} else if fileSize < MiB {

@@ -12,12 +12,12 @@ import (
 
 // 初始化配置读取
 func InitLog() {
-	logInstance := log.New()
+	//logInstance := log.New()
 	// 获取日志输出方式
 	t := Config.GetString("log.out_type")
 	log.SetLevel(log.InfoLevel)
 	log.SetFormatter(&log.TextFormatter{
-		ForceColors:     true,
+		ForceColors:     false,
 		DisableColors:   false,
 		FullTimestamp:   true,
 		TimestampFormat: "2006-01-02 15:04:05",
@@ -40,14 +40,17 @@ func InitLog() {
 		if err != nil {
 			fmt.Println("err", err)
 		}
-		logInstance.Out = src
+		//logInstance.Out = src
+		log.SetOutput(src)
 		break
 	case "console":
 		// 输出控制台
-		logInstance.Out = os.Stdout
+		log.SetOutput(os.Stdout)
+		//logInstance.Out = os.Stdout
 		break
 	default:
-		logInstance.Out = os.Stdout
+		//logInstance.Out = os.Stdout
+		log.SetOutput(os.Stdout)
 		break
 	}
 }

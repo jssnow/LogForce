@@ -21,7 +21,8 @@ func main() {
 
 	initNotice()
 	initCount()
-	go initMonitor()
+	go startMonitorApi()
+	go services.InitMonitorCron()
 
 	mode := common.Config.Get("data_receiving_mode")
 	log.Infof("数据接收方式%s", mode)
@@ -85,7 +86,7 @@ func initCount() {
 }
 
 // 启一个http服务用来获取服务监控信息
-func initMonitor() {
+func startMonitorApi() {
 	// 注册所有路由
 	r := routers.MonitorRouter()
 
