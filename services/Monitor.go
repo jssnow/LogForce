@@ -17,7 +17,7 @@ const (
 )
 
 type MonitorOut struct {
-	RecordTime    time.Time
+	RecordTime    string
 	Num           int
 	ContentLength string
 	Goroutines    int
@@ -39,13 +39,18 @@ func InitMonitorCron() {
 		<-ticker.C
 
 		MonitorInfo.Lock()
-		out := MonitorOut{time.Now(), MonitorInfo.Num, FormatFileSize(MonitorInfo.ContentLength), runtime.NumGoroutine()}
+		out := MonitorOut{time.Now().Format("2006-01-02 15:04:05"), MonitorInfo.Num, FormatFileSize(MonitorInfo.ContentLength), runtime.NumGoroutine()}
 		MonitorInfo.ContentLength = 0
 		MonitorInfo.Num = 0
 		MonitorInfo.Unlock()
 
 		MonitorOutMapWithLock.Lock()
 		MonitorOutMapWithLock.MonitorOutResult = append(MonitorOutMapWithLock.MonitorOutResult, out)
+
+		// Keep up to a 1000 records
+		if len(MonitorOutMapWithLock.MonitorOutResult) > 1000 {
+			MonitorOutMapWithLock.MonitorOutResult = MonitorOutMapWithLock.MonitorOutResult[(len(MonitorOutMapWithLock.MonitorOutResult) - 1000):]
+		}
 		MonitorOutMapWithLock.Unlock()
 	}
 }
