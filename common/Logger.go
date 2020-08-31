@@ -29,7 +29,7 @@ func InitLog() {
 		fileName := path.Join(logFilePath, logFileName)
 
 		// 写入文件
-		src, err := os.OpenFile(fileName, os.O_APPEND|os.O_WRONLY|os.O_CREATE, os.ModeAppend)
+		src, err := os.OpenFile(fileName, os.O_WRONLY|os.O_CREATE|os.O_APPEND, os.ModeAppend|os.ModePerm)
 		if err != nil {
 			fmt.Println("err", err)
 		}

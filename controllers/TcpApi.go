@@ -40,6 +40,7 @@ func TcpReceiveLog(logInfo []byte) {
 		unmarshalLog(logInfo, logInfoLen)
 	}
 
+	services.DoDealLog(jsonInput)
 	return
 }
 
@@ -50,5 +51,4 @@ func unmarshalLog(logInfo []byte, len int) {
 		log.Errorf("err:%v,log:%s", err, logInfo)
 	}
 	jsonInput.ContentLength = len
-	services.DoDealLog(jsonInput)
 }
