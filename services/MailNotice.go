@@ -3,6 +3,7 @@ package services
 import (
 	"LogForce/common"
 	"LogForce/entity"
+	"fmt"
 	log "github.com/sirupsen/logrus"
 	"gopkg.in/gomail.v2"
 	"strconv"
@@ -33,7 +34,8 @@ func SendMail() {
 
 				// 发送
 				if err := d.DialAndSend(m); err != nil {
-					log.Error(err)
+					log.Error(fmt.Printf("报警邮件发送失败：%v", err))
+					return
 				}
 				log.Info("报警邮件发送成功")
 			}

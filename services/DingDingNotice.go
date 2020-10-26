@@ -3,6 +3,7 @@ package services
 import (
 	"LogForce/entity"
 	"bytes"
+	"fmt"
 	log "github.com/sirupsen/logrus"
 	"net/http"
 )
@@ -18,11 +19,9 @@ func SendDingDing() {
 					dingDingURL := "https://oapi.dingtalk.com/robot/send?access_token=" + value
 					//发送消息到钉钉群使用webhook
 					resp, err := http.Post(dingDingURL, "application/json", bytes.NewBuffer(dingString.Content))
-					//body, err := ioutil.ReadAll(resp.Body)
 					if err != nil || resp.StatusCode != 200 {
-						log.Error("报警钉钉发送请求失败:")
-					} else {
-						log.Info("报警钉钉发送请求成功")
+						log.Error(fmt.Sprintf("报警钉钉发送请求失败:%v", err))
+						return
 					}
 					resp.Body.Close()
 				}
